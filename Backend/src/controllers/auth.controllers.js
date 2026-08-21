@@ -4,6 +4,14 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const blacklistModel = require("../models/blacklist.model")
 
+const isProduction = process.env.NODE_ENV === "production" || Boolean(process.env.RENDER_EXTERNAL_URL);
+const authCookieOptions = {
+  httpOnly: true,
+  sameSite: isProduction ? "none" : "lax",
+  secure: isProduction,
+  maxAge: 24 * 60 * 60 * 1000,
+};
+
 //Abb hum iske through db se access kar paayenge
 
 /**
@@ -52,7 +60,7 @@ async function userregisterController(req, res) {
   );
 
   //Abb humme iss token ko cookie main set karna hain
-  res.cookie("token", token);
+  res.cookie("token", token, authCookieOptions);
 
   //Yaani hum cookies se token naam ke variable in the object se user ko authenticate karenge
   return res.status(201).json({
@@ -98,7 +106,7 @@ async function loginUserController(req, res) {
   );
 
   //Abb humme iss token ko cookie main set karna hain
-  res.cookie("token", token);
+  res.cookie("token", token, authCookieOptions);
 
   //Yaani hum cookies se token naam ke variable in the object se user ko authenticate karenge
   return res.status(200).json({
@@ -119,7 +127,7 @@ async function logoutUserController(req, res) {
     //Yaani isse blacklist main daal do
 
   }
-  res.clearCookie("token");
+  res.clearCookie("token", authCookieOptions);
   return res.status(200).json({
     message: "User logged-out successfully !!!"
   });

@@ -4,7 +4,7 @@ import axios from "axios";
 //Common axios instance with a timeout so a hung backend request fails
 //after 10s instead of hanging the loader forever.
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL || "http://localhost:3000"}/api/auth`,
+  baseURL: `${import.meta.env.VITE_API_URL || "https://careerforge-ai-backend-cc9f.onrender.com"}/api/auth`,
   withCredentials: true,
   timeout: 10000,
 });
