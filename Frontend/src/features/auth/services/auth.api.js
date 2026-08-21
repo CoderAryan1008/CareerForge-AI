@@ -9,10 +9,25 @@ const api = axios.create({
   timeout: 10000,
 });
 
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("auth_token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+function saveAuthToken(data) {
+  if (data?.token) {
+    localStorage.setItem("auth_token", data.token);
+  }
+  return data;
+}
+
 export async function register({ username, email, password }) {
   try {
     const response = await api.post("/register", { username, email, password });
-    return response.data;
+    return saveAuthToken(response.data);
   }
   catch (err) {
     console.log(err);
@@ -23,7 +38,7 @@ export async function register({ username, email, password }) {
 export async function login({ email, password }) {
   try {
     const response = await api.post("/login", { email, password });
-    return response.data;
+    return saveAuthToken(response.data);
   }
   catch (err) {
     console.log(err);
@@ -34,6 +49,7 @@ export async function login({ email, password }) {
 export async function logout() {
   try {
     const response = await api.post("/logout", {});
+    localStorage.removeItem("auth_token");
     return response.data;
   }
   catch (err) {
@@ -49,6 +65,7 @@ export async function get_me() {
   }
   catch (err) {
     console.log(err);
+    localStorage.removeItem("auth_token");
     return null;
   }
 }

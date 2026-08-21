@@ -65,6 +65,7 @@ async function userregisterController(req, res) {
   //Yaani hum cookies se token naam ke variable in the object se user ko authenticate karenge
   return res.status(201).json({
     message: "User successfully Signed-Up...",
+    token,
     user: {
       id: User._id,
       username: User.username,
@@ -111,6 +112,7 @@ async function loginUserController(req, res) {
   //Yaani hum cookies se token naam ke variable in the object se user ko authenticate karenge
   return res.status(200).json({
     message: "User successfully Logged-In...",
+    token,
     user: {
       id: user._id,
       username: user.username,

@@ -6,6 +6,14 @@ const api = axios.create({
   timeout: 20000,
 });//For handling the interview related apis 
 
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("auth_token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export async function generateInterviewReport({ jobDescription, selfDescription, resumeFile }) {
   const formData = new FormData();
   formData.append("selfDescription", selfDescription);

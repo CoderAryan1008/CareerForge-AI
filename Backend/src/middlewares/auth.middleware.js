@@ -3,7 +3,11 @@ const jwt = require("jsonwebtoken");
 const blacklistModel = require("../models/blacklist.model");
 //Iss middleware ka kaam hain toh check ki user login toh hain na
 async function AuthUser(req, res, next) { //Yeh ek middleware hain isliye iske 3 args hain
-  const token = req.cookies.token;
+  const authorization = req.headers.authorization;
+  const bearerToken = authorization?.startsWith("Bearer ")
+    ? authorization.slice(7)
+    : null;
+  const token = req.cookies.token || bearerToken;
   if (!token) {
     return res.status(401).json({
       message: "Token Not found !!!"
