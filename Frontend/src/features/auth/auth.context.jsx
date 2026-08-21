@@ -8,17 +8,36 @@ export const AuthProvider = ({ children }) => {
   const [loader, setloader] = useState(true);
   //Abb humme yaahan refresh cycles ke beech main bhi dhyan deena hain
   useEffect(() => {
+    let isMounted = true;
+    const loaderTimeout = window.setTimeout(() => {
+      if (isMounted) {
+        setUser(null);
+        setloader(false);
+      }
+    }, 12000);
+
     async function getAndsetUser() {
       try {
         const data = await get_me();
-        setUser(data?.user ?? null);
+        if (isMounted) {
+          setUser(data?.user ?? null);
+        }
       } catch {
-        setUser(null);
+        if (isMounted) {
+          setUser(null);
+        }
       } finally {
-        setloader(false);
+        if (isMounted) {
+          setloader(false);
+        }
       }
     }
     getAndsetUser();
+
+    return () => {
+      isMounted = false;
+      window.clearTimeout(loaderTimeout);
+    };
   }, []);
   return (
     <AuthContext.Provider value={{ user, setUser, loader, setloader }}>
