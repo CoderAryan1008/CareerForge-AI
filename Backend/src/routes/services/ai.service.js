@@ -1,7 +1,8 @@
 //Humme yaahan ai ki api ke y set karni hain
 const { GoogleGenAI } = require("@google/genai");
 const { z } = require("zod");//Isse humme structured output milega from ai ke answer se
-const puppeteer = require("puppeteer");
+const chromium = require("@sparticuz/chromium");
+const puppeteerCore = require("puppeteer-core");
 const ai = new GoogleGenAI({
   apiKey: process.env.GoogleGenAI_APIKEY
 });
@@ -199,7 +200,9 @@ function normalizeResumeHtml(htmlContent) {
 
 async function generatePdffromHTML(htmlContent) {
   const browser = await puppeteer.launch({
-    headless: "new",
+    args: chromium.args,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
   });
 
   const page = await browser.newPage();
