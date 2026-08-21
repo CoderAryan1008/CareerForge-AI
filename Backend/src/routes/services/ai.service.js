@@ -198,33 +198,31 @@ function normalizeResumeHtml(htmlContent) {
   return rawHtml;
 }
 
-async function generatePdffromHTML(htmlContent) {
-  const browser = await puppeteer.launch({
-    args: chromium.args,
-    executablePath: await chromium.executablePath(),
-    headless: chromium.headless,
-  });
+async function generateResumeController(req, res) {
+  try {
+    const { interviewReportID } = req.params;
+    const InterviewReport = await ReportModel.findById(interviewReportID);
+    if (!InterviewReport) {
+      return res.status(404).json({ message: `No Report Exists with this ${interviewReportID} !!!` });
+    }
 
-  const page = await browser.newPage();
+    const { resume, selfDescription, jobDescription } = InterviewReport;
+    const pdfBuffer = await generateResumefromAI({
+      resume: resume ?? "",
+      selfDescription: selfDescription ?? "",
+      jobDescription: jobDescription ?? "",
+    });
 
-  await page.setContent(normalizeResumeHtml(htmlContent), {
-    waitUntil: "networkidle2",
-  });
-
-  const pdfBuffer = await page.pdf({
-    format: "A4",
-    printBackground: true,
-    margin: {
-      top: "0.5in",
-      right: "0.5in",
-      bottom: "0.5in",
-      left: "0.5in",
-    },
-  });
-
-  await browser.close();
-
-  return pdfBuffer;
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="resume_${interviewReportID}.pdf"`,
+      'Content-Length': pdfBuffer.length
+    });
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error("generateResumeController failed:", err); // <-- this will now actually show up
+    res.status(500).json({ message: "Failed to generate resume", error: err.message });
+  }
 }
 async function generateResumefromAI({ resume, selfDescription, jobDescription }) {
   //Abb humme yaahan ai ko provide karna hain teeno info and for woh humme ek proper html form main resume generate karke deega jisse ab hum puppeteer ke through pdf main convert karenge
