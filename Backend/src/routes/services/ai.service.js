@@ -302,6 +302,10 @@ Generate the resume in valid HTML that can be directly rendered and converted in
 
 Requirements:
 - Add the exact links in the resume as clickable hyperlinks using proper HTML <a href="...">...</a> elements.
+- If any photo avaialble then include it properly without breaking the layout.
+- Ensure the resume is well-structured, clean, and professional in appearance.
+- Use a proper A4 layout with consistent margins and padding for printing.
+- Highlight relevant skills, experience, and achievements that align with the job description.
 - Tailor the resume specifically to the provided job description while staying strictly truthful to the candidate's information.
 - Do not invent skills, experience, education, projects, certifications, or achievements that are not provided.
 - Preserve all relevant hyperlinks from the original resume.
