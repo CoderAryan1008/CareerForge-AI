@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import ThemeToggle from "../../../components/ThemeToggle.jsx";
 import Loader from "../../../components/Loader.jsx";
 import "../auth.form.scss";
-
+import { IoLogOutOutline } from "react-icons/io5";
 function Logout() {
   const { user, loader, handlelogout } = useAuth();
   const navigate = useNavigate();
@@ -54,6 +54,7 @@ function Logout() {
 
         <button type="button" className="primary-button" onClick={handleLogout}>
           Log out
+          <IoLogOutOutline />
         </button>
       </section>
     </main>

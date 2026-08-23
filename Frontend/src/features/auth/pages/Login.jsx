@@ -71,7 +71,7 @@ function Login() {
           Don't have an account?{" "}
           <span
             onClick={() => {
-              navigate("/Register");
+              navigate("/register");
             }}
           >
             Register

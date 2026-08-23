@@ -14,11 +14,11 @@ import Logout from "./features/auth/pages/Logout.jsx";
 import GetReports from "./features/interview/pages/GetReports.jsx";
 const router = createBrowserRouter([
   {
-    path: "/Login",
+    path: "/login",
     element: <Login />,
   },
   {
-    path: "/Register",
+    path: "/register",
     element: <Register />,
   },
   {

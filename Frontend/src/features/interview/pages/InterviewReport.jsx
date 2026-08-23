@@ -6,6 +6,8 @@ import { useInterview } from "../hooks/useInterview.js";
 import { LiaUserSecretSolid } from "react-icons/lia";
 import { useNavigate } from "react-router";
 import { RiAiGenerate2 } from "react-icons/ri";
+import { FiNavigation } from "react-icons/fi";
+import { FaClipboardList } from "react-icons/fa";
 /* eslint-disable no-useless-escape */
 // eslint-disable-next-line no-unused-vars
 const sampleReport = {
@@ -138,7 +140,11 @@ const tabs = [
   { id: "overview", label: "Overview" },
   { id: "technical", label: "Technical Questions" },
   { id: "behavioral", label: "Behavioral Questions" },
-  { id: "plan", label: "Prep Plan" },
+  {
+    id: "plan",
+    label: "Prep Plan",
+    icon: <FaClipboardList aria-hidden="true" />,
+  },
 ];
 
 function InterviewReport({ report: propReport }) {
@@ -341,6 +347,7 @@ function InterviewReport({ report: propReport }) {
                   onClick={() => handleTabChange(tab.id)}
                   type="button"
                 >
+                  {tab.icon}
                   {tab.label}
                 </button>
               ))}
@@ -362,8 +369,8 @@ function InterviewReport({ report: propReport }) {
               className="sidebar-action"
               onClick={downloadResume}
             >
-              <RiAiGenerate2 />
               Generate Resume
+              <RiAiGenerate2 />
             </button>
           </div>
         </aside>

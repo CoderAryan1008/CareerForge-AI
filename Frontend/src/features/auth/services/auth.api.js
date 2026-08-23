@@ -65,7 +65,9 @@ export async function get_me() {
   }
   catch (err) {
     console.log(err);
-    localStorage.removeItem("auth_token");
+    if (err.response?.status === 401 || err.response?.status === 404) {
+      localStorage.removeItem("auth_token");
+    }
     return null;
   }
 }

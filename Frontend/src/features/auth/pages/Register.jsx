@@ -83,7 +83,7 @@ function Register() {
           Already have an account?{" "}
           <span
             onClick={() => {
-              navigate("/Login");
+              navigate("/login");
             }}
           >
             Login
