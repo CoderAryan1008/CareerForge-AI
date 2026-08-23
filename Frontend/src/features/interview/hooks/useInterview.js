@@ -80,7 +80,7 @@ export const useInterview = () => {
   async function generateresume(reportId) {
     // setLoader(true);
     toast(
-      "Generating Resume, Please wait...",
+      "Generating Resume, Please explore other features for a while, it may take upto 1 minute",
       {
         duration: 6000,
       }
