@@ -301,40 +301,41 @@ ${linksSection}
 Generate the resume in valid HTML that can be directly rendered and converted into a PDF using Puppeteer.
 
 Requirements:
-You are an expert resume writer and HTML/CSS formatter. Using the candidate's original resume content and the target job description provided below, generate a polished, ATS-friendly, print-ready resume as a single HTML document.
+Generate a polished, ATS-friendly, print-ready A4 resume as a single HTML document, using the candidate data and job description below.
 
-STRICT CONTENT RULES:
-- Do not invent or embellish any skills, experience, education, projects, certifications, or achievements. Use only what is provided in the candidate's original resume/data.
-- Tailor emphasis, wording, and ordering to align with the job description — but do not fabricate anything to match it.
-- Cover all relevant points from both the self-description and job description, highlighting skills, experience, and achievements that align with the role.
+RULES:
+- Use only the provided candidate info — do not invent/embellish skills, experience, education, projects, certifications, or achievements.
+- Tailor wording, emphasis, and order to match the job description without fabricating content.
+- Highlight skills/experience/achievements that align with both the self-description and job description.
 
-LINKS (must be preserved exactly):
-- Copy every hyperlink from the original resume character-for-character — do not shorten, rewrite, guess, or "clean up" any URL.
-- Convert every link into a real clickable HTML element: <a href="EXACT_ORIGINAL_URL">Display Text</a>.
-- If a URL is missing "https://", normalize it to a full valid URL (e.g., "linkedin.com/in/xyz" → "https://linkedin.com/in/xyz") — but do not alter the path, username, or query parameters.
-- Include all profile/portfolio links (GitHub, LinkedIn, personal website, blog, Dev.to, LeetCode, CodeChef, Codeforces, HackerRank, etc.) in the contact section, and any project-specific links in the relevant project entries.
-- Double-check at the end that every href in your output matches the original source link exactly (aside from the https:// normalization).
+LINKS:
+- Copy every hyperlink from the original resume exactly (char-for-char) — no shortening, guessing, or altering.
+- Convert all links to real clickable elements: <a href="EXACT_URL">Text</a>.
+- If a URL lacks "https://", prepend it without changing the rest of the URL.
+- Include all profile links (GitHub, LinkedIn, portfolio, blog, Dev.to, LeetCode, CodeChef, etc.) in contact/project sections.
+- Verify every href matches the original source before finalizing.
 
 PHOTO:
-- If the original resume includes a photo, embed it in the HTML (as a base64 <img> or referenced image) in a way that fits naturally into the header/contact area without breaking the layout, resizing, or distorting it.
-- If no photo is present, do not add a placeholder image or invent one.
+- If a photo exists in the original, embed it (base64 <img>) neatly in the header, circular or rounded-square, fixed size (e.g. 100–120px), without breaking layout.
+- If no photo exists, don't add one.
 
-LAYOUT & STYLING:
-- Design for a proper A4 page size with consistent, visible margins/padding on all sides (no edge-to-edge content).
-- Wrap all content in a page container div with defined padding/margin so printed/exported PDF output looks clean.
-- Use a clean, professional, modern, single-column or well-balanced multi-column layout appropriate for a resume.
-- Ensure the layout stays intact when converted to PDF (avoid elements that overflow, get cut off, or collapse when printed).
-- Keep formatting ATS-friendly: use semantic HTML (headings, lists), avoid tables for core content, avoid text embedded only in images.
+LAYOUT & STYLING (critical — must look professionally designed, not like plain text with lines):
+- Use a modern sans-serif font stack (e.g. 'Calibri', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif).
+- Establish clear visual hierarchy: name (largest, bold, ~24-28px), section headings (uppercase or bold, ~13-15px, with a subtle bottom border or accent color), body text (~10.5-11px for print density).
+- Use ONE consistent accent color (e.g. a professional navy, teal, or dark blue) applied sparingly to headings, borders, links, or icons — not the whole page.
+- Consistent spacing: define fixed margins between sections (e.g. 14-18px), and consistent line-height (1.4-1.5) for readability.
+- Use flexbox/grid for alignment — e.g. two-column layout for header (name/title left, contact/photo right), or job entries with role/title on left and dates aligned right.
+- Add subtle dividers (thin border-bottom, 1px, light gray) between sections instead of large blank gaps.
+- Bullet points for experience/projects should be tight (no excessive padding), left-aligned, with a small consistent indent.
+- Contact info and links row should be a single clean horizontal line (or wrap gracefully), separated by small icons or a subtle separator (•, |), not stacked awkwardly.
+- Avoid default browser styling — explicitly reset margins/padding on body, ul, li, h1-h6, p.
+- A4 size (210mm x 297mm), consistent 15-20mm margins on all sides via a padded page container — no edge-to-edge content.
+- Ensure layout doesn't break/overflow when printed or exported to PDF; avoid page-break issues (avoid splitting a bullet or heading across pages).
+- ATS-friendly: semantic HTML, no tables for core content, no text embedded in images.
 
-OUTPUT FORMAT:
-- Return ONLY the raw HTML (including inline <style> in the <head>) — no Markdown code fences, no explanations, no extra commentary before or after.
+OUTPUT:
+- Return ONLY raw HTML (with inline <style> in <head>) — no markdown fences, no explanations.
 
----
-CANDIDATE RESUME DATA:
-[PASTE ORIGINAL RESUME TEXT / DATA HERE]
-
-JOB DESCRIPTION:
-[PASTE JOB DESCRIPTION HERE]
 `;
 
 
