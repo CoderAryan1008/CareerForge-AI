@@ -301,24 +301,40 @@ ${linksSection}
 Generate the resume in valid HTML that can be directly rendered and converted into a PDF using Puppeteer.
 
 Requirements:
-- Add the exact links in the resume as clickable hyperlinks using proper HTML <a href="...">...</a> elements.
-- If any photo avaialble then include it properly without breaking the layout.
-- Ensure the resume is well-structured, clean, and professional in appearance.
-- Use a proper A4 layout with consistent margins and padding for printing.
-- Highlight relevant skills, experience, and achievements that align with the job description.
-- Tailor the resume specifically to the provided job description while staying strictly truthful to the candidate's information.
-- Do not invent skills, experience, education, projects, certifications, or achievements that are not provided.
-- Preserve all relevant hyperlinks from the original resume.
-- Convert hyperlinks into proper HTML <a href="...">...</a> elements so they remain clickable in the generated PDF.
-- Preserve the original URLs accurately and use complete URLs including https:// where applicable.
-- If the resume contains GitHub, LinkedIn, portfolio, blog, Dev.to, leetcode, codechef, or other profile links, include them in the contact section or project section as clickable links in the HTML.
-- If a URL appears without https://, normalize it to a valid full URL before using it in href attributes.
-- Maintain a clean, professional, well-structured resume layout suitable for a PDF.
-- Use a proper A4 resume layout with consistent visible margins on all sides. Add CSS for the page and content container so the printed resume does not stretch edge-to-edge.
-- Include a wrapper such as a page container with padding and margin so the resume has clean spacing around the content.
-- Return only the HTML content. Do not include Markdown code fences, explanations, or any text outside the HTML.
-- The resume should be ATS friendly.
-- Also cover all the points mentioned in the self-description and job description in the resume and highlight the relevant skills, experience, and achievements that align with the job requirements.
+You are an expert resume writer and HTML/CSS formatter. Using the candidate's original resume content and the target job description provided below, generate a polished, ATS-friendly, print-ready resume as a single HTML document.
+
+STRICT CONTENT RULES:
+- Do not invent or embellish any skills, experience, education, projects, certifications, or achievements. Use only what is provided in the candidate's original resume/data.
+- Tailor emphasis, wording, and ordering to align with the job description — but do not fabricate anything to match it.
+- Cover all relevant points from both the self-description and job description, highlighting skills, experience, and achievements that align with the role.
+
+LINKS (must be preserved exactly):
+- Copy every hyperlink from the original resume character-for-character — do not shorten, rewrite, guess, or "clean up" any URL.
+- Convert every link into a real clickable HTML element: <a href="EXACT_ORIGINAL_URL">Display Text</a>.
+- If a URL is missing "https://", normalize it to a full valid URL (e.g., "linkedin.com/in/xyz" → "https://linkedin.com/in/xyz") — but do not alter the path, username, or query parameters.
+- Include all profile/portfolio links (GitHub, LinkedIn, personal website, blog, Dev.to, LeetCode, CodeChef, Codeforces, HackerRank, etc.) in the contact section, and any project-specific links in the relevant project entries.
+- Double-check at the end that every href in your output matches the original source link exactly (aside from the https:// normalization).
+
+PHOTO:
+- If the original resume includes a photo, embed it in the HTML (as a base64 <img> or referenced image) in a way that fits naturally into the header/contact area without breaking the layout, resizing, or distorting it.
+- If no photo is present, do not add a placeholder image or invent one.
+
+LAYOUT & STYLING:
+- Design for a proper A4 page size with consistent, visible margins/padding on all sides (no edge-to-edge content).
+- Wrap all content in a page container div with defined padding/margin so printed/exported PDF output looks clean.
+- Use a clean, professional, modern, single-column or well-balanced multi-column layout appropriate for a resume.
+- Ensure the layout stays intact when converted to PDF (avoid elements that overflow, get cut off, or collapse when printed).
+- Keep formatting ATS-friendly: use semantic HTML (headings, lists), avoid tables for core content, avoid text embedded only in images.
+
+OUTPUT FORMAT:
+- Return ONLY the raw HTML (including inline <style> in the <head>) — no Markdown code fences, no explanations, no extra commentary before or after.
+
+---
+CANDIDATE RESUME DATA:
+[PASTE ORIGINAL RESUME TEXT / DATA HERE]
+
+JOB DESCRIPTION:
+[PASTE JOB DESCRIPTION HERE]
 `;
 
 

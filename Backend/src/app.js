@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json()); //For converting the html request into json form
 app.use(cookieParser());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "https://career-forge-ai-zeta.vercel.app",
+  origin: "http://localhost:5173" || "https://career-forge-ai-zeta.vercel.app",
   credentials: true //Yaani cookie handle kar saake
 }));
 const AuthRouter = require("./routes/auth.routes");

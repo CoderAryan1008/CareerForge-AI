@@ -5,6 +5,7 @@ import Loader from "../../../components/Loader.jsx";
 import { useInterview } from "../hooks/useInterview.js";
 import { LiaUserSecretSolid } from "react-icons/lia";
 import { useNavigate } from "react-router";
+import { RiAiGenerate2 } from "react-icons/ri";
 /* eslint-disable no-useless-escape */
 // eslint-disable-next-line no-unused-vars
 const sampleReport = {
@@ -361,6 +362,7 @@ function InterviewReport({ report: propReport }) {
               className="sidebar-action"
               onClick={downloadResume}
             >
+              <RiAiGenerate2 />
               Generate Resume
             </button>
           </div>
