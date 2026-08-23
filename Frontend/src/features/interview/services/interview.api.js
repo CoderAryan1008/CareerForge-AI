@@ -51,7 +51,7 @@ export async function getAllReports() {
 export async function generateresume(interviewReportID) {
   //Abb humme yaaha resume banwaana hain
   const response = await api.get(`/api/interview/generateresume/${interviewReportID}`, {
-    timeout: 90000,
+    timeout: 110000,
     responseType: "blob",
   });
   return response.data;

@@ -198,6 +198,56 @@ function normalizeResumeHtml(htmlContent) {
   return rawHtml;
 }
 
+// ---------------------------------------------------------------------------
+// PUPPETEER BROWSER REUSE (kept private to this file — nothing else needs it)
+// ---------------------------------------------------------------------------
+
+// Lives outside any function, so it stays alive in memory across requests
+// as long as the server process itself keeps running.
+let browserInstance = null;
+
+async function getBrowser() {
+  // Reuse the existing browser if it's still alive
+  if (browserInstance && browserInstance.connected) {
+    return browserInstance;
+  }
+
+  console.log("Launching a new Chromium instance...");
+  browserInstance = await puppeteerCore.launch({
+    args: chromium.args,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
+  });
+
+  // Safety net: if the browser crashes/closes unexpectedly,
+  // reset so the NEXT request rebuilds it fresh instead of reusing a dead one.
+  browserInstance.on("disconnected", () => {
+    console.log("Chromium instance disconnected, will relaunch on next request.");
+    browserInstance = null;
+  });
+
+  return browserInstance;
+}
+
+async function generatePdffromHTML(html) {
+  const browser = await getBrowser(); // reuse existing browser, or build once
+  const page = await browser.newPage(); // opening a new tab is cheap and fast
+
+  try {
+    const normalizedHtml = normalizeResumeHtml(html);
+    await page.setContent(normalizedHtml, { waitUntil: "networkidle0" });
+
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      printBackground: true,
+    });
+
+    return pdfBuffer;
+  } finally {
+    await page.close(); // always close the tab, NOT the browser
+  }
+}
+
 async function generateResumeController(req, res) {
   try {
     const { interviewReportID } = req.params;
