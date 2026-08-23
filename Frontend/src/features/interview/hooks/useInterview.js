@@ -3,6 +3,7 @@ import { generateInterviewReport, getAllReports, getInterviewReportById, generat
 import { useContext, useEffect } from "react";
 import { InterviewContext } from "../Interview.context.js";
 import { useParams } from "react-router";
+import { toast } from "react-hot-toast";
 
 export const useInterview = () => {
   const { interviewId } = useParams(); //isse humme current url ka parameterized part milega
@@ -77,7 +78,13 @@ export const useInterview = () => {
   }
 
   async function generateresume(reportId) {
-    setLoader(true);
+    // setLoader(true);
+    toast(
+      "Generating Resume, Please wait...",
+      {
+        duration: 6000,
+      }
+    );
     try {
       const blob = await apiGenerateresume(reportId);
       if (!blob) throw new Error("No file returned from server");
@@ -94,8 +101,6 @@ export const useInterview = () => {
     } catch (err) {
       console.error(err);
       return false;
-    } finally {
-      setLoader(false);
     }
   }
 
