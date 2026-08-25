@@ -30,6 +30,10 @@ export const AuthProvider = ({ children }) => {
         if (isMounted) {
           setloader(false);
         }
+        // Fetch finished (success or failure) — the failsafe timeout is no
+        // longer needed, so cancel it to stop it from wiping the user state
+        // out later.
+        window.clearTimeout(loaderTimeout);
       }
     }
     getAndsetUser();

@@ -6,14 +6,6 @@ const puppeteerCore = require("puppeteer-core");
 const ai = new GoogleGenAI({
   apiKey: process.env.GoogleGenAI_APIKEY
 });
-async function invokeGeminiAI() {
-  const response = await ai.models.generateContent({
-    model: "gemini-3.1-flash-lite",
-    contents: "hello gemini ! Can u help me for what is meant by interview ?"
-  })
-  console.log(response.text);
-
-};
 
 const interviewReportSchema = z.object({
   matchScore: z
@@ -140,11 +132,11 @@ async function getStructuredResponseFromAI({ resume, selfDescription, jobDescrip
     contents: prompt,
     config: {
       responseMimeType: "application/json",
-      responseJsonSchema: z.toJSONSchema(interviewReportSchema)
+      responseJsonSchema: z.toJSONSchema(interviewReportSchema)//Isme hum baata rahe hain ki kiss structure main humme chahiye answer 
     }
   });
 
-  return JSON.parse(response.text);
+  return JSON.parse(response.text); //Yaani jo bhi baana hain usse js ke object main convert kar do
 }
 
 function normalizeResumeHtml(htmlContent) {
@@ -263,7 +255,7 @@ async function generateResumeController(req, res) {
       jobDescription: jobDescription ?? "",
     });
 
-    res.set({
+    res.set({//Isse hum user ke liye seedha download karke de rahe hain pdf ko
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="resume_${interviewReportID}.pdf"`,
       'Content-Length': pdfBuffer.length
@@ -277,7 +269,7 @@ async function generateResumeController(req, res) {
 async function generateResumefromAI({ resume, selfDescription, jobDescription }) {
   //Abb humme yaahan ai ko provide karna hain teeno info and for woh humme ek proper html form main resume generate karke deega jisse ab hum puppeteer ke through pdf main convert karenge
   const resumePdfSchema = z.object({
-    resumeHtml: z.string().describe("The html form of the resume which can be converted into pdf using puppeteer")
+    resumeHtml: z.string().describe("The html form of the resume in proper formal designed format which can be converted into pdf using puppeteer")
   });
 
   const extractedUrls = extractUrlsFromText(`${resume ?? ""}\n${selfDescription ?? ""}\n${jobDescription ?? ""}`);
@@ -286,7 +278,9 @@ async function generateResumefromAI({ resume, selfDescription, jobDescription })
     : "";
 
   const prompt = `
-Create a professionally tailored and ATS-friendly resume for the candidate using the following information:
+You are an elite resume designer and ATS (Applicant Tracking System) optimization expert who builds resumes for candidates landing offers at top companies.
+
+Create a professionally tailored, visually beautiful, and ATS-friendly resume for the candidate using the following information:
 
 Resume:
 ${resume}
@@ -303,39 +297,57 @@ Generate the resume in valid HTML that can be directly rendered and converted in
 Requirements:
 Generate a polished, ATS-friendly, print-ready A4 resume as a single HTML document, using the candidate data and job description below.
 
-RULES:
+CONTENT RULES:
 - Use only the provided candidate info — do not invent/embellish skills, experience, education, projects, certifications, or achievements.
 - Tailor wording, emphasis, and order to match the job description without fabricating content.
 - Highlight skills/experience/achievements that align with both the self-description and job description.
+- Lead bullet points with strong action verbs and quantify impact wherever the source data allows (numbers, %, scale) — never invent metrics that aren't in the source data.
+- Keep bullets concise (ideally 1-2 lines each) so the resume stays scannable and ideally fits on one page (max two pages only if content genuinely requires it).
 
-LINKS:
-- Copy every hyperlink from the original resume exactly (char-for-char) — no shortening, guessing, or altering.
-- Convert all links to real clickable elements: <a href="EXACT_URL">Text</a>.
-- If a URL lacks "https://", prepend it without changing the rest of the URL.
-- Include all profile links (GitHub, LinkedIn, portfolio, blog, Dev.to, LeetCode, CodeChef, etc.) in contact/project sections.
-- Verify every href matches the original source before finalizing.
+LINKS — THIS IS CRITICAL, DO NOT SKIP OR DROP ANY LINK:
+- Every single hyperlink present in the original resume, self-description, or the extracted URLs list above MUST appear in the final HTML — copy each URL exactly (char-for-char), no shortening, truncating, guessing, or altering.
+- Convert every link into a real clickable element: <a href="EXACT_URL" target="_blank" rel="noopener noreferrer">Display Text</a>.
+- If a URL lacks "https://" or "http://", prepend "https://" without changing the rest of the URL.
+- Place profile/social links (GitHub, LinkedIn, portfolio, personal website, blog, Dev.to, LeetCode, CodeChef, Behance, etc.) in the header/contact row, and project-specific links (live demo, repo, case study) next to the relevant project entry.
+- Before finalizing, cross-check every href against the original source text and the extracted URLs list — none should be missing, mistyped, or paraphrased.
+- Never render a link as plain unlinked text — always wrap it in an <a> tag.
+
+VISUAL DESIGN — THE RESUME MUST LOOK PREMIUM AND DESIGNER-MADE, NOT LIKE A DEFAULT TEMPLATE:
+- Use a modern, refined sans-serif font stack (e.g. 'Calibri', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif).
+- Establish a clear, confident visual hierarchy:
+  - Candidate name: largest element, bold, ~26-30px, set in the accent color or near-black.
+  - Optional role/title tagline directly under the name: ~13-14px, medium weight, muted gray.
+  - Section headings: ~13-15px, bold, uppercase with slight letter-spacing (~0.5-1px), accompanied by a thin accent-colored underline or left border.
+  - Body/bullet text: ~10.5-11px for print density, line-height 1.4-1.5 for readability.
+- Pick ONE sophisticated, professional accent color (deep navy, slate blue, forest green, or charcoal teal) and use it sparingly and consistently — headings, thin dividers, link color, small icon accents, maybe a subtle header background band. Never use more than one accent color, and never make the page loud or colorful.
+- Layout:
+  - Two-column header: candidate name/title/summary on the left, contact info (and photo, if present) aligned right — or a clean centered header if that suits the content better.
+  - For experience/education entries: role/title and company on the left, dates aligned to the right on the same line, using flexbox with justify-content: space-between.
+  - Optional: a slim two-column body layout (e.g. ~65/35 split) with core sections (experience, projects, education) on the left and a sidebar (skills, links, certifications) on the right — only if the content is rich enough to support it; otherwise use a clean single-column layout. Choose whichever layout best fits the amount of content without leaving large empty gaps or causing overflow.
+- Section spacing: consistent margin of 14-18px between sections, consistent 6-8px between entries within a section.
+- Use subtle 1px light-gray divider lines between major sections instead of large blank gaps.
+- Bullet points: tight consistent left indent, no excessive padding, custom bullet marker style (e.g. small dash or dot) rather than default browser bullets.
+- Contact/links row: a single clean horizontal line (wrapping gracefully if needed), items separated by a small subtle separator such as "•" or "|", never stacked awkwardly on separate lines unless space truly requires it.
+- Explicitly reset default browser styling on body, ul, ol, li, h1-h6, p, a (margin: 0; padding: 0; where appropriate) before applying custom styles.
+- Use whitespace intentionally — generous but not wasteful — so the page feels balanced and premium rather than cramped or sparse.
+
+PRINT / PDF SAFETY:
+- A4 size (210mm x 297mm) with consistent 15-20mm page padding on all sides via a padded page container — no edge-to-edge content.
+- Ensure the layout never overflows or breaks when printed/exported to PDF; avoid splitting a bullet, heading, or entry awkwardly across a page break (use CSS like break-inside: avoid on entries where useful).
+- Everything must render correctly with inline <style> only — no external stylesheets or fonts that require network access.
+
+ATS-FRIENDLINESS (do not sacrifice this for visual flair):
+- Use clean semantic HTML (headings, paragraphs, lists) — no tables for core content structure.
+- No text embedded inside images; if a photo is included it must only be a photo, never a text-bearing image.
+- Keep the reading order logical top-to-bottom, left-to-right so ATS parsers extract content correctly even if visual columns are used.
+- Standard section names (e.g. "Experience", "Education", "Skills", "Projects") so ATS keyword matching works reliably.
 
 PHOTO:
-- If a photo exists in the original, embed it (base64 <img>) neatly in the header, circular or rounded-square, fixed size (e.g. 100–120px), without breaking layout.
+- If a photo exists in the original, embed it (base64 <img>) neatly in the header, circular or rounded-square, fixed size (e.g. 100-120px), without breaking layout.
 - If no photo exists, don't add one.
 
-LAYOUT & STYLING (critical — must look professionally designed, not like plain text with lines):
-- Use a modern sans-serif font stack (e.g. 'Calibri', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif).
-- Establish clear visual hierarchy: name (largest, bold, ~24-28px), section headings (uppercase or bold, ~13-15px, with a subtle bottom border or accent color), body text (~10.5-11px for print density).
-- Use ONE consistent accent color (e.g. a professional navy, teal, or dark blue) applied sparingly to headings, borders, links, or icons — not the whole page.
-- Consistent spacing: define fixed margins between sections (e.g. 14-18px), and consistent line-height (1.4-1.5) for readability.
-- Use flexbox/grid for alignment — e.g. two-column layout for header (name/title left, contact/photo right), or job entries with role/title on left and dates aligned right.
-- Add subtle dividers (thin border-bottom, 1px, light gray) between sections instead of large blank gaps.
-- Bullet points for experience/projects should be tight (no excessive padding), left-aligned, with a small consistent indent.
-- Contact info and links row should be a single clean horizontal line (or wrap gracefully), separated by small icons or a subtle separator (•, |), not stacked awkwardly.
-- Avoid default browser styling — explicitly reset margins/padding on body, ul, li, h1-h6, p.
-- A4 size (210mm x 297mm), consistent 15-20mm margins on all sides via a padded page container — no edge-to-edge content.
-- Ensure layout doesn't break/overflow when printed or exported to PDF; avoid page-break issues (avoid splitting a bullet or heading across pages).
-- ATS-friendly: semantic HTML, no tables for core content, no text embedded in images.
-
 OUTPUT:
-- Return ONLY raw HTML (with inline <style> in <head>) — no markdown fences, no explanations.
-
+- Return ONLY raw HTML (with inline <style> in <head>) — no markdown fences, no explanations, no commentary.
 `;
 
 

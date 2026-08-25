@@ -52,8 +52,8 @@ async function userregisterController(req, res) {
   });
 
   const token = jwt.sign(
-    { id: User._id, username: User.username },
-    process.env.SECRET_KEY,
+    { id: User._id, username: User.username }, //payload
+    process.env.SECRET_KEY,//Signature
     {
       expiresIn: "1d"
     }
@@ -137,7 +137,7 @@ async function logoutUserController(req, res) {
 
 async function getmeController(req, res) {
   //Humme yaahan user ki info ko user ko deena hain
-  const user = await userModel.findById(req.user.id);
+  const user = await userModel.findById(req.user.id); //Yeh humme req main set karke dega user middleware
   return res.status(200).json({
     message: "User found successfully...",
     user:
